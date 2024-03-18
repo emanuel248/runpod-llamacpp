@@ -18,4 +18,4 @@ RUN apt-get update --yes && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-CMD ["./runmodel.sh", "$MODEL_URL", "model.gguf"]
+CMD ["./runmodel.sh", "$MODEL_URL", "/workspace/model.gguf"]
