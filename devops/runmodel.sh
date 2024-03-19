@@ -1,21 +1,20 @@
 #!/bin/bash
 
 # Check if correct number of arguments provided
-if [ "$#" -ne 2 ]; then
-    echo "Usage: $0 <URL> <target_path>"
+if [ -z "$MODEL_URL" ]; then
+    echo "Error: MODEL_URL environment variable is not set."
     exit 1
 fi
 
-url="$1"
-target_path="$2"
+target_path="$1"
 
 # Check if file already exists
 if [ -f "$target_path" ]; then
     echo "File already exists at $target_path"
 else
     # Download the file using curl
-    echo "Downloading file from $url to $target_path..."
-    curl -o "$target_path" "$url"
+    echo "Downloading file from $MODEL_URL to $target_path..."
+    wget -q "$MODEL_URL" -O "$target_path"
     if [ $? -eq 0 ]; then
         echo "Download successful!"
     else
@@ -24,5 +23,7 @@ else
     fi
 fi
 
-screen -S srv ./server -c 8192 --port 9009 --host 0.0.0.0 -np 2 -ngl 35 -m $target_path
-sh /start.sh
+make -j LLAMA_CUBLAS=1 &> build.log
+./server -c 8192 --port 9009 --host 0.0.0.0 -np 2 -ngl 35 -m "$target_path" &> server.log &
+/start.sh
+
