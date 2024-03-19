@@ -23,7 +23,9 @@ else
     fi
 fi
 
+echo "compiling llama.cpp.."
 make -j LLAMA_CUBLAS=1 &> build.log
+echo "running model server.."
 ./server -c 8192 --port 9009 --host 0.0.0.0 -np 2 -ngl 35 -m "$target_path" &> server.log &
 /start.sh
 
